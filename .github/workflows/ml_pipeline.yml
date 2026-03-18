@@ -30,36 +30,36 @@ jobs:
             outputs/metrics.json
             registry/champion.json
 
-build-inference-image:
-  runs-on: ubuntu-latest
-  needs: train-and-register
-  steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
+  build-inference-image:
+    runs-on: ubuntu-latest
+    needs: train-and-register
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
 
-        python-version: "3.11"
-    - name: Download training artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: training-outputs
-        path: .
-    - name: Prepare deployment files
-      run: |
-        python src/prepare_deployment.py
-    - name: Show deployment contents
-      run: |
-        ls -R deployment
-    - name: Build Docker image
-      run: |
-        docker build -t champion-inference-api:latest deployment
-    - name: Save Docker image as tar
-      run: |
-        docker save -o champion-inference-api.tar champion-inference-api:latest
-    - name: Upload Docker image artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: champion-docker-image
-        path: champion-inference-api.tar
+          python-version: "3.11"
+      - name: Download training artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: training-outputs
+          path: .
+      - name: Prepare deployment files
+        run: |
+          python src/prepare_deployment.py
+      - name: Show deployment contents
+        run: |
+          ls -R deployment
+      - name: Build Docker image
+        run: |
+          docker build -t champion-inference-api:latest deployment
+      - name: Save Docker image as tar
+        run: |
+          docker save -o champion-inference-api.tar champion-inference-api:latest
+      - name: Upload Docker image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: champion-docker-image
+          path: champion-inference-api.tar
